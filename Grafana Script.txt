@@ -1,0 +1,56 @@
+#Things to watch out for:
+#Grafana no longer supports unecrypted storage of passwrods 
+#Grafana no longer supports unsigned plugins(but can be changed in..)
+#(Config, not recommended)
+#should you stop services influxdb and telegraf? (Don't think it matters much)
+
+#FIRST STEP: SNAPSHOT VM
+
+#check to see if box up to date
+sudo apt update
+sudo apt upgrade -y
+
+#change directory to grafana (your directories will be different)
+cd /home/atlas/backup
+
+#back up config file
+sudo cp grafana.ini /etc/
+
+#change directory to telegraf
+cd /etc/telegraf
+
+#back up telegraf db and config file
+sudo cp telegraf.conf /home/atlas/backup
+sudo cp telegraf.d /home/atlas/backup
+#change directory to influxdb
+cd /tec/influxdb
+
+#back up config file
+sudo cp influxdb.conf /home/atlas/backup
+
+#change directory back to grafana
+cd /etc/grafana
+
+#stop grafana server
+sudo systemctl stop grafana-server
+
+#grab latest version of grafana
+wget https://dl.grafana.com/enterprise/release/grafana-enterprise-8.2.3-1.x86_64.rpm
+
+#install grafana file 
+sudo yum install grafana-enterprise-8.2.3-1.x86_64.rpm
+
+#IF RUN INTO PACKGAGE DEPENDACY ERROR....RUN NEXT LINE
+#sudo apt-get install -f
+#should automatically restart
+sudo systemctl restart grafana-server
+
+#update plugins
+sudo grafana-cli plugins update-all
+
+#final restart of grafana server
+sudo systemctl restart grafana-server
+
+#HIT IP for testing
+
+#ROLLBACK: Reinstate snapshot. 
